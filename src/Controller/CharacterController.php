@@ -14,6 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/character')]
 final class CharacterController extends AbstractController
 {    
+    #
+    # SI RIEN NE MARCHE, RETOURNER SUR LA SEQUENCE 21, PAGE 30
+    #
+    
     #[Route('/', name: 'app_character_index', methods: ['GET'])]
     public function index(CharacterRepository $characterRepository): Response
     {

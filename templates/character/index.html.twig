@@ -1,48 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Character index{% endblock %}
+{% block title %}La guilde des saigneurs{% endblock %}
 
 {% block body %}
-    <h1>Character index</h1>
+    <div class="d-flex p-2 justify-content-between">
+        <h1>Character index</h1>
+        <a class="btn btn-primary align-middle" href="{{ path('app_character_new') }}">New character</a>
+    </div>
 
-    <table class="table">
+    <table class="table table-hover">
+        {# Column names #}
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Identifier</th>
+            <tr class="text-center">
+                <th>Kind</th>
                 <th>Name</th>
                 <th>Slug</th>
-                <th>Kind</th>
                 <th>Surname</th>
                 <th>Caste</th>
                 <th>Knowledge</th>
                 <th>Intelligence</th>
                 <th>Strength</th>
-                <th>Image</th>
                 <th>Creation</th>
                 <th>Modification</th>
                 <th>actions</th>
             </tr>
         </thead>
+
+        {# Column infos #}
         <tbody>
         {% for character in characters %}
-            <tr>
-                <td>{{ character.id }}</td>
-                <td>{{ character.identifier }}</td>
-                <td>{{ character.name }}</td>
+            <tr class="text-center">
+                {% if character.kind == "Dame" %}
+                    <td><strong>{{ character.kind }}</strong></td>
+                {% else %}
+                    <td>{{ character.kind }}</td>
+                {% endif %}
+                <td>
+                    <a href="{{ path('app_character_show', {'id': character.id}) }}">{{ character.name }}</a>
+                </td>
                 <td>{{ character.slug }}</td>
-                <td>{{ character.kind }}</td>
                 <td>{{ character.surname }}</td>
                 <td>{{ character.caste }}</td>
                 <td>{{ character.knowledge }}</td>
                 <td>{{ character.intelligence }}</td>
                 <td>{{ character.strength }}</td>
-                <td>{{ character.image }}</td>
-                <td>{{ character.creation ? character.creation|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ character.modification ? character.modification|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ character.creation ? character.creation|date('d/m/Y') : '' }}</td>
+                <td>{{ character.modification ? character.modification|date('d/m/Y') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_character_show', {'id': character.id}) }}">show</a>
-                    <a href="{{ path('app_character_edit', {'id': character.id}) }}">edit</a>
+                    <a href="{{ path('app_character_edit', {'id': character.id}) }}">Edit</a>
                 </td>
             </tr>
         {% else %}
@@ -52,6 +57,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('app_character_new') }}">Create new</a>
 {% endblock %}
