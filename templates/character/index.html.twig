@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Character index{% endblock %}
+
+{% block body %}
+    <h1>Character index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Identifier</th>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Kind</th>
+                <th>Surname</th>
+                <th>Caste</th>
+                <th>Knowledge</th>
+                <th>Intelligence</th>
+                <th>Strength</th>
+                <th>Image</th>
+                <th>Creation</th>
+                <th>Modification</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for character in characters %}
+            <tr>
+                <td>{{ character.id }}</td>
+                <td>{{ character.identifier }}</td>
+                <td>{{ character.name }}</td>
+                <td>{{ character.slug }}</td>
+                <td>{{ character.kind }}</td>
+                <td>{{ character.surname }}</td>
+                <td>{{ character.caste }}</td>
+                <td>{{ character.knowledge }}</td>
+                <td>{{ character.intelligence }}</td>
+                <td>{{ character.strength }}</td>
+                <td>{{ character.image }}</td>
+                <td>{{ character.creation ? character.creation|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ character.modification ? character.modification|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_character_show', {'id': character.id}) }}">show</a>
+                    <a href="{{ path('app_character_edit', {'id': character.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_character_new') }}">Create new</a>
+{% endblock %}
