@@ -3,9 +3,12 @@
 {% block title %}New Character{% endblock %}
 
 {% block body %}
-    <h1>Create new Character</h1>
+    <div class="d-flex justify-content-between">
+        <h1>Create new Character</h1>
+        <a class="btn btn-primary" href="{{ path('app_character_index') }}">Back to list</a>
+    </div>
 
-    {{ include('character/_form.html.twig') }}
-
-    <a href="{{ path('app_character_index') }}">back to list</a>
+    <div class="col-6 offset-3">
+        {{ include('character/_form.html.twig') }}
+    </div>
 {% endblock %}
