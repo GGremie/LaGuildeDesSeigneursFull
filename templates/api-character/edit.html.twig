@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Character{% endblock %}
+
+{% block body %}
+    <h1>Edit Character</h1>
+
+    <div class="col-6 offset-3">
+        <div class="d-flex justify-content-between">
+            {{ include('api-character/_delete_form.html.twig') }}
+        
+            <a class="btn btn-primary" href="{{ path('api_character_index') }}">back to list</a>
+        </div>
+        {{ include('api-character/_form.html.twig', {'button_label': 'Update'}) }}
+
+    </div>
+{% endblock %}

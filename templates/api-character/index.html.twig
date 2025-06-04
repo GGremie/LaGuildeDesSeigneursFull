@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}La guilde des saigneurs{% endblock %}
+
+{% block body %}
+    <div class="d-flex p-2 justify-content-between">
+        <h1>Character index</h1>
+        <a class="btn btn-primary align-middle" href="{{ path('api_character_new') }}">New character</a>
+    </div>
+
+    <table class="table table-hover">
+        {# Column names #}
+        <thead>
+            <tr class="text-center">
+                <th>Kind</th>
+                <th>Name</th>
+                <th>Slug</th>
+                <th>Surname</th>
+                <th>Caste</th>
+                <th>Knowledge</th>
+                <th>Intelligence</th>
+                <th>Strength</th>
+                <th>Creation</th>
+                <th>Modification</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+
+        {# Column infos #}
+        <tbody>
+        {% for character in characters %}
+            <tr class="text-center">
+                {% if character.kind == "Dame" %}
+                    <td><strong>{{ character.kind }}</strong></td>
+                {% else %}
+                    <td>{{ character.kind }}</td>
+                {% endif %}
+                <td>
+                    <a href="{{ path('api_character_show', {'id': character.id}) }}">{{ character.name }}</a>
+                </td>
+                <td>{{ character.slug }}</td>
+                <td>{{ character.surname }}</td>
+                <td>{{ character.caste }}</td>
+                <td>{{ character.knowledge }}</td>
+                <td>{{ character.intelligence }}</td>
+                <td>{{ character.strength }}</td>
+                <td>{{ character.creation ? character.creation|date('d/m/Y') : '' }}</td>
+                <td>{{ character.modification ? character.modification|date('d/m/Y') : '' }}</td>
+                <td>
+                    <a href="{{ path('api_character_edit', {'id': character.id}) }}">Edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
