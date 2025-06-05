@@ -68,6 +68,14 @@ final class CharacterController extends AbstractController
         ]);
     }
 
+    #[Route('/health/{health}', name: 'app_character_health', methods: ['GET'])]
+    public function getHealth(CharacterRepository $characterRepository, string $health): Response
+    {
+        return $this->render('character/health.html.twig', [
+            'characters' => $characterRepository->findByHealth($health),
+        ]);
+    }
+
     #[Route('/{id}/edit', name: 'app_character_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Character $character, EntityManagerInterface $entityManager): Response
     {

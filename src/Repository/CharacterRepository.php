@@ -16,6 +16,15 @@ class CharacterRepository extends ServiceEntityRepository
         parent::__construct($registry, Character::class);
     }
 
+    public function findByHealth($health): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.health <= :val')
+            ->setParameter('val', $health)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Character[] Returns an array of Character objects
     //     */
