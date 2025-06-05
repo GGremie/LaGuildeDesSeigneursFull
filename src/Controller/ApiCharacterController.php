@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use DateTime;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use App\Form\ApiCharacterType;
 
 #[Route('/api-character')]
 final class ApiCharacterController extends AbstractController
@@ -31,7 +30,7 @@ final class ApiCharacterController extends AbstractController
     {
         $response = $this->client->request(
             'GET',
-            $this->getParameter('app.api_url') . '/characters/',
+            $this->getParameter('app.api_url') . '/characters/?size=50',
             [
                 'auth_bearer' => $request->getSession()->get('token'), // Récupération du token
             ]
@@ -46,11 +45,11 @@ final class ApiCharacterController extends AbstractController
     public function new(Request $request): Response
     {
         $character = [];
-        $form = $this->createForm(ApiCharacterType::class, $character);
+        $form = $this->createForm(ApiCharacterForm::class, $character);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $request->request->all()['api_character'];
+            $data = $request->request->all()['api_character_form'];
             unset($data['_token']);
             $response = $this->client->request(
                 'POST',
@@ -101,11 +100,11 @@ final class ApiCharacterController extends AbstractController
         );
         $character = $response->toArray();
 
-        $form = $this->createForm(ApiCharacterType::class, $character);
+        $form = $this->createForm(ApiCharacterForm::class, $character);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $request->request->all()['api_character']; // Récupération des données du formulaire
+            $data = $request->request->all()['api_character_form']; // Récupération des données du formulaire
             unset($data['_token']); // Suppression du token
             $this->client->request(
                 'PUT',
@@ -131,7 +130,6 @@ final class ApiCharacterController extends AbstractController
     public function delete(Request $request, string $identifier): Response
     {
         if ($this->isCsrfTokenValid('delete' . $identifier, $request->request->get('_token'))) {
-            $entityManager->remove($character);
             $this->client->request(
                 'DELETE',
                 $this->getParameter('app.api_url') . '/characters/' . $identifier,
