@@ -44,7 +44,10 @@
                 <td>{{ character.caste }}</td>
                 <td>{{ character.knowledge }}</td>
                 <td>{{ character.intelligence }}</td>
-                <td>{{ character.health }}</td>
+                <td>
+                    {# <a href="{{ path('api_character_health', {'health': character.health}) }}"></a> #}
+                    {{ character.health }}
+                </td>
                 <td>{{ character.strength }}</td>
                 <td>{{ character.creation ? character.creation|date('d/m/Y') : '' }}</td>
                 <td>{{ character.modification ? character.modification|date('d/m/Y') : '' }}</td>

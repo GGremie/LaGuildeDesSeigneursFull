@@ -152,7 +152,7 @@ final class ApiCharacterController extends AbstractController
                 'auth_bearer' => $request->getSession()->get('token'), // Récupération du token
             ]
         );
-
+        
         return $this->render('api-character/health.html.twig', [
            'characters' => $response->toArray(),
         ]);
