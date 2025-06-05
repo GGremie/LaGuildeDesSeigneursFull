@@ -36,7 +36,7 @@
                     <td>{{ character.kind }}</td>
                 {% endif %}
                 <td>
-                    <a href="{{ path('api_character_show', {'id': character.id}) }}">{{ character.name }}</a>
+                    <a href="{{ path('api_character_show', {'identifier': character.identifier}) }}">{{ character.name }}</a>
                 </td>
                 <td>{{ character.slug }}</td>
                 <td>{{ character.surname }}</td>
@@ -47,7 +47,7 @@
                 <td>{{ character.creation ? character.creation|date('d/m/Y') : '' }}</td>
                 <td>{{ character.modification ? character.modification|date('d/m/Y') : '' }}</td>
                 <td>
-                    <a href="{{ path('api_character_edit', {'id': character.id}) }}">Edit</a>
+                    <a href="{{ path('api_character_edit', {'identifier': character.identifier}) }}">Edit</a>
                 </td>
             </tr>
         {% else %}

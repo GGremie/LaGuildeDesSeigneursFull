@@ -65,7 +65,7 @@
 
         <a href="{{ path('api_character_index') }}">back to list</a>
 
-        <a href="{{ path('api_character_edit', {'id': character.id}) }}">edit</a>
+        <a href="{{ path('api_character_edit', {'identifier': character.identifier}) }}">Edit</a>
 
         {{ include('api-character/_delete_form.html.twig') }}
     </div>

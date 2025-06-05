@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use DateTime;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Form\ApiCharacterType;
 
 #[Route('/api-character')]
 final class ApiCharacterController extends AbstractController
@@ -42,24 +43,26 @@ final class ApiCharacterController extends AbstractController
     }
 
     #[Route('/new', name: 'api_character_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request): Response
     {
-        $character = new Character();
-        $form = $this->createForm(ApiCharacterForm::class, $character);
+        $character = [];
+        $form = $this->createForm(ApiCharacterType::class, $character);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Mieux dans un service
-            $character->setIdentifier(hash('sha1', uniqid()));
-            $character->setSlug($this->slugger->slug($character->getName())->lower());
-            $character->setCreation(new DateTime());
-            $character->setModification(new DateTime());
-
-            $entityManager->persist($character);
-            $entityManager->flush();
+            $data = $request->request->all()['api_character'];
+            unset($data['_token']);
+            $response = $this->client->request(
+                'POST',
+                $this->getParameter('app.api_url') . '/characters/',
+                [
+                    'auth_bearer' => $request->getSession()->get('token'),
+                    'json' => $data,
+                ]
+            );
 
             return $this->redirectToRoute('api_character_show', [
-                'id' => $character->getId()
+                'identifier' => $response->toArray()['identifier']
             ], Response::HTTP_SEE_OTHER);
         }
 
@@ -69,29 +72,52 @@ final class ApiCharacterController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'api_character_show', methods: ['GET'])]
-    public function show(Character $character): Response
+    #[Route('/{identifier}', name: 'api_character_show', methods: ['GET'])]
+    public function show(Request $request, string $identifier): Response
     {
+        $response = $this->client->request(
+            'GET',
+            $this->getParameter('app.api_url') . '/characters/' . $identifier,
+            [
+                'auth_bearer' => $request->getSession()->get('token'),
+            ]
+        );
+
         return $this->render('api-character/show.html.twig', [
-            'character' => $character,
+            'character' => $response->toArray(),
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'api_character_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Character $character, EntityManagerInterface $entityManager): Response
+    #[Route('/{identifier}/edit', name: 'api_character_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, string $identifier): Response
     {
-        $form = $this->createForm(ApiCharacterForm::class, $character);
+        // Récupération du Character
+        $response = $this->client->request(
+            'GET',
+            $this->getParameter('app.api_url') . '/characters/' . $identifier,
+            [
+                'auth_bearer' => $request->getSession()->get('token'),
+            ]
+        );
+        $character = $response->toArray();
+
+        $form = $this->createForm(ApiCharacterType::class, $character);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Mieux dans un service
-            $character->setSlug($this->slugger->slug($character->getName())->lower());
-            $character->setModification(new DateTime());
-
-            $entityManager->flush();
+            $data = $request->request->all()['api_character']; // Récupération des données du formulaire
+            unset($data['_token']); // Suppression du token
+            $this->client->request(
+                'PUT',
+                $this->getParameter('app.api_url') . '/characters/' . $identifier,
+                [
+                    'auth_bearer' => $request->getSession()->get('token'),
+                    'json' => $data,
+                ]
+            );
 
             return $this->redirectToRoute('api_character_show', [
-                'id' => $character->getId()
+                'identifier' => $identifier
             ], Response::HTTP_SEE_OTHER);
         }
 
@@ -101,12 +127,18 @@ final class ApiCharacterController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'api_character_delete', methods: ['POST'])]
-    public function delete(Request $request, Character $character, EntityManagerInterface $entityManager): Response
+    #[Route('/{identifier}', name: 'api_character_delete', methods: ['POST'])]
+    public function delete(Request $request, string $identifier): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$character->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $identifier, $request->request->get('_token'))) {
             $entityManager->remove($character);
-            $entityManager->flush();
+            $this->client->request(
+                'DELETE',
+                $this->getParameter('app.api_url') . '/characters/' . $identifier,
+                [
+                    'auth_bearer' => $request->getSession()->get('token')
+                ]
+            );
         }
 
         return $this->redirectToRoute('api_character_index', [], Response::HTTP_SEE_OTHER);
