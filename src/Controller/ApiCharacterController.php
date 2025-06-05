@@ -141,4 +141,20 @@ final class ApiCharacterController extends AbstractController
 
         return $this->redirectToRoute('api_character_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/health/{health}', name: 'api_character_health', methods: ['GET'])]
+    public function getByHealth(Request $request, string $health): Response
+    {
+        $response = $this->client->request(
+            'GET',
+            $this->getParameter('app.api_url') . '/characters/health/' . $health,
+            [
+                'auth_bearer' => $request->getSession()->get('token'), // Récupération du token
+            ]
+        );
+
+        return $this->render('api-character/health.html.twig', [
+           'characters' => $response->toArray(),
+        ]);
+    }
 }

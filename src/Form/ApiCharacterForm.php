@@ -32,6 +32,7 @@ class ApiCharacterForm extends AbstractType
                     'max' => 250,
                 ),
             ))
+            ->add('health', TextType::class)
             ->add('strength', IntegerType::class, array(
                 'required' => false,
                 'label' => 'Niveau de force',

@@ -40,6 +40,9 @@ class Character
     private ?int $intelligence = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $health = null;
+
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $strength = null;
 
     #[ORM\Column(length: 50, nullable: true)]
@@ -151,6 +154,18 @@ class Character
     public function setIntelligence(?int $intelligence): static
     {
         $this->intelligence = $intelligence;
+
+        return $this;
+    }
+
+    public function getHealth(): ?int
+    {
+        return $this->health;
+    }
+
+    public function setHealth(?int $health): static
+    {
+        $this->health = $health;
 
         return $this;
     }
